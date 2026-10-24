@@ -1,0 +1,46 @@
+---
+description: Node.js and TypeScript conventions for this project
+globs: "**/*.{ts,tsx,js,mjs,cjs}"
+alwaysApply: false
+---
+
+# Node.js + TypeScript
+
+## Language & runtime
+- Prefer TypeScript over plain JavaScript for new files
+- Use ES modules (`import`/`export`); avoid CommonJS `require` unless a dependency forces it
+- Target modern Node (LTS); use built-in APIs before adding packages
+
+## Types
+- Prefer explicit types on public APIs and function returns; let inference work for locals
+- Avoid `any`; use `unknown` and narrow, or define a proper type/interface
+- Prefer `interface` for object shapes; use `type` for unions, intersections, and mapped types
+
+## Async & errors
+- Prefer `async`/`await` over raw Promise chains
+- Never swallow errors with empty `catch`; log or rethrow with context
+- Propagate typed/domain errors from services; map to HTTP status only at the route layer
+
+```typescript
+// ❌ BAD
+try {
+  await loadUser(id);
+} catch (e) {}
+
+// ✅ GOOD
+try {
+  await loadUser(id);
+} catch (e) {
+  throw new Error(`Failed to load user ${id}`, { cause: e });
+}
+```
+
+## Project structure
+- Keep route/handler thin; put business logic in services/modules
+- Colocate types next to the code that owns them
+- Use named exports; default export only when the module has a single clear primary export
+
+## Style
+- Match existing formatting; do not invent new patterns mid-file
+- No drive-by refactors or unrelated file edits
+- Prefer small, focused modules over large utility dumps
